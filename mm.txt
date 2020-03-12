@@ -1,32 +1,43 @@
-<!-- <app-employee-list></app-employee-list> -->
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { EmployeeService } from "./../employee.service";
+import { Employee } from "./../employee";
+
+@Component({
+  selector: 'app-update-employee',
+  templateUrl: './update-employee.component.html',
+  styleUrls: ['./update-employee.component.css']
+})
+export class UpdateEmployeeComponent implements OnInit {
+
+	id: number;
+	employee: Employee;
+
+constructor(private route: ActivatedRoute, private router: Router,private employeeService: EmployeeService) { }
+
+  ngOnInit() {
+  	this.employee = new Employee;
+  	this.id = this.route.snapshot.params['id'];
+	this.employeeService.getEmployee(this.id)
+	.subscribe(data => {
+		console.log(data)
+		this.employee = data;
+	}, error => console.log(error));
+}
+
+ updateEmployee() {
+  	this.employeeService.updateEmployee(this.id, this.employee).subscribe(data => console.log(data), error => console.log(error));
+  	this.employee = new Employee();
+  	this.gotoList();
+  }
+
+  onSubmit() {
+  	this.updateEmployee();
+  }
+
+  gotoList() {
+  	this.router.navigate(['/employee'])
+  }
 
 
-<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
-	
-	<ul class="navbar-nav">
-		<li class="nav item">
-			<a  routerLink = "employees" class="nav-link" routerLinkActive = "active">Employee List</a>
-		</li>
-
-		<li class="nav item">
-			<a  routerLink = "add" class="nav-link" routerLinkActive = "active">Add Employee</a>
-		</li>
-	</ul>
-</nav>
-
-<div class="container">
-	<br>
-	<h2 style="text-align: center;">{{title}}</h2>
-	<hr>
-	<div class="card">
-		<div class="card-body">
-		<router-outlet></router-outlet>	
-		</div>
-	</div>
-</div>
-
-<footer class="footer">
-	<div class="container">
-		<span>All Rights Reserved 2020</span>
-	</div>
-</footer>
+}
